@@ -1,0 +1,52 @@
+[
+	{
+		"id": 1,
+		"title": "工作空间",
+		"icon": "layui-icon layui-icon-console",
+		"type": 0,
+		"href": "",
+		"children": [
+			{
+				"id": 10,
+				"title": "商品库",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "/admin/product/product-table"
+			},
+			{
+				"id": 10,
+				"title": "购物车",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "/admin/shopping/product-shopping"
+			},
+			{
+				"id": 10,
+				"title": "固定任务",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "/admin/shopping/product-shopping"
+			}
+		,
+			{
+				"id": 10,
+				"title": "店铺分析（测试版）",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "/admin/stockAvailability/stock-availability"
+			}
+		,{
+				"id": 15,
+				"title": "备货统计",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "/admin/stockAvailability/stock-availability"
+			}
+		]
+	}
+]

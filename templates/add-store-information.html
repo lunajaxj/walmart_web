@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>添加页面</title>
+    <link rel="stylesheet" href="/public/static/pear/css/pear.css"/>
+</head>
+<body>
+<form class="layui-form" action="">
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="AccountShopName" lay-verify="AffiliatedCompany" autocomplete="off" placeholder="请输入"
+                           class="layui-input" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="ShopID" lay-verify="AffiliatedCompany" autocomplete="off" placeholder="请输入"
+                           class="layui-input" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">PID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="PID" lay-verify="AffiliatedCompany" autocomplete="off" placeholder="请输入"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">隶属公司</label>
+                <div class="layui-input-block">
+                    <input type="text" name="AffiliatedCompany" lay-verify="AffiliatedCompany" autocomplete="off" placeholder="请输入"
+                           class="layui-input" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注1</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Note1" lay-verify="Note1" autocomplete="off" placeholder="请输入"
+                           class="layui-input" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注2</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Note2" lay-verify="Note2" autocomplete="off" placeholder="请输入"
+                           class="layui-input" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注3</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Note3" lay-verify="Note3" autocomplete="off" placeholder="请输入"
+                           class="layui-input" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注4</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Note4" lay-verify="Note4" autocomplete="off" placeholder="请输入"
+                           class="layui-input" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注5</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Note5" lay-verify="Note5" autocomplete="off" placeholder="请输入"
+                           class="layui-input">
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit=""
+                    lay-filter="user-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+            <button type="reset" class="pear-btn pear-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i>
+                重置
+            </button>
+        </div>
+    </div>
+</form>
+<script src="/public/static/layui/layui.js"></script>
+<script src="/public/static/pear/pear.js"></script>
+<script>
+    layui.use(['form', 'jquery'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        form.on('submit(user-save)', function (data) {
+            $.ajax({
+                url: '/api/storeInformation/add',
+                data: data.field,
+                // dataType: 'json',
+                // contentType: 'application/json',
+                type: 'post',
+                success: function (result) {
+                        layer.msg(result.msg, {
+                            icon: 1,
+                            time: 1000
+                        }, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window
+                                .name)); //关闭当前页
+                            parent.layui.table.reload("user-table");
+                        });
+
+                }
+            })
+            return false;
+        });
+    })
+</script>
+<script>
+</script>
+</body>
+</html>

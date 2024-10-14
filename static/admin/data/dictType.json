@@ -1,0 +1,143 @@
+{
+  "status": {
+    "code": 200,
+    "message": "成功"
+  },
+  "data": [
+    {
+      "id": "Allergy Medicine",
+      "title": "Allergy Medicine",
+      "last": false,
+      "parentId": "Health and Medicine",
+      "children": [
+        {
+          "id": "Good Sense",
+          "title": "Good Sense",
+          "last": true,
+          "parentId": "Allergy Medicine",
+          "children": null
+        }
+      ]
+    },
+    {
+      "id": "Feature",
+      "title": "Feature",
+      "last": false,
+      "parentId": "0",
+      "children": [
+        {
+          "id": "Game Night",
+          "title": "Game Night",
+          "last": false,
+          "parentId": "Feature",
+          "children": [
+            {
+              "id": "Game Room Shop All",
+              "title": "Game Room Shop All",
+              "last": true,
+              "parentId": "Game Night",
+              "children": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Game Night",
+      "title": "Game Night",
+      "last": false,
+      "parentId": "Feature",
+      "children": [
+        {
+          "id": "Game Room Shop All",
+          "title": "Game Room Shop All",
+          "last": true,
+          "parentId": "Game Night",
+          "children": null
+        }
+      ]
+    },
+    {
+      "id": "Game Room Shop All",
+      "title": "Game Room Shop All",
+      "last": true,
+      "parentId": "Game Night",
+      "children": null
+    },
+    {
+      "id": "Good Sense",
+      "title": "Good Sense",
+      "last": true,
+      "parentId": "Allergy Medicine",
+      "children": null
+    },
+    {
+      "id": "Health and Medicine",
+      "title": "Health and Medicine",
+      "last": false,
+      "parentId": "0",
+      "children": [
+        {
+          "id": "Allergy Medicine",
+          "title": "Allergy Medicine",
+          "last": false,
+          "parentId": "Health and Medicine",
+          "children": [
+            {
+              "id": "Good Sense",
+              "title": "Good Sense",
+              "last": true,
+              "parentId": "Allergy Medicine",
+              "children": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Squishmallows Stuffed Animals",
+      "title": "Squishmallows Stuffed Animals",
+      "last": true,
+      "parentId": "Stuffed Animals\u0026 Plush Toys",
+      "children": null
+    },
+    {
+      "id": "Stuffed Animals\u0026 Plush Toys",
+      "title": "Stuffed Animals\u0026 Plush Toys",
+      "last": false,
+      "parentId": "Toys",
+      "children": [
+        {
+          "id": "Squishmallows Stuffed Animals",
+          "title": "Squishmallows Stuffed Animals",
+          "last": true,
+          "parentId": "Stuffed Animals\u0026 Plush Toys",
+          "children": null
+        }
+      ]
+    },
+    {
+      "id": "Toys",
+      "title": "Toys",
+      "last": false,
+      "parentId": "0",
+      "children": [
+        {
+          "id": "Stuffed Animals\u0026 Plush Toys",
+          "title": "Stuffed Animals\u0026 Plush Toys",
+          "last": false,
+          "parentId": "Toys",
+          "children": [
+            {
+              "id": "Squishmallows Stuffed Animals",
+              "title": "Squishmallows Stuffed Animals",
+              "last": true,
+              "parentId": "Stuffed Animals\u0026 Plush Toys",
+              "children": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

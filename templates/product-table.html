@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>产品库</title>
+<!--    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>-->
+    <!-- 引入组件库 -->
+<!--    <script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+    <!-- 引入样式 -->
+<!--    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+    <link rel="stylesheet" href="../../public/static/pear/css/pear.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <style>
+        .expand.pear-btn:hover {
+            color: currentColor;
+            background: none;
+        }
+        .expand.pear-btn {
+            border: 1px solid rgba(255, 255, 255, 0)
+        }
+        /* 样式：悬浮球 */
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .floating-btn a {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px 10px;
+            border-radius: 50px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .floating-btn a:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form id="userForm" class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">id</label>
+                    <div class="layui-input-inline">
+                        <textarea name="id" placeholder="" class="layui-textarea" style="width: 100%;"></textarea>
+
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="title" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">卖家</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="sellers" placeholder="" class="layui-input">
+                    </div>
+                </div>
+<!--                <div class="layui-inline">-->
+<!--                    <label class="layui-form-label">排除卖家</label>-->
+<!--                    <div class="layui-input-inline" >-->
+<!--                        <select name="sellersType" lay-verify="mark" >-->
+<!--                            <option value="">请选择</option>-->
+<!--                            <option value="1">官方</option>-->
+<!--                            <option value="2">其他</option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                -->
+                <div class="layui-inline">
+                    <label class="layui-form-label">排除卖家</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="sellersType" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">标签</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="tags" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">品牌</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="brands" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="remark" placeholder="" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">标记</label>
+                    <div class="layui-input-inline">
+                        <select name="mark" lay-verify="mark">
+                            <option value="">请选择</option>
+                            [[range $index, $mar := .marks ]]
+                            <option value="[[ $mar ]]">[[ $mar ]]</option>
+                            [[ end ]]
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">类目</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="categoryName" placeholder="" class="layui-input">
+                    </div>
+                </div>
+<!--                <div class="layui-inline">-->
+<!--                    <label class="layui-form-label">类目</label>-->
+<!--                    <div class="layui-input-inline">-->
+<!--                        <input type="text" name="categoryName" id="categoryName" lay-verify="categoryName"  autocomplete="off" placeholder=""-->
+<!--                               class="layui-input" style="display:none">-->
+<!--                        <div id="app">-->
+<!--                            <el-cascader :props="props" @change="handleChange" ></el-cascader>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="layui-inline">-->
+<!--                    <label class="layui-form-label">活动</label>-->
+<!--                    <div class="layui-input-inline">-->
+<!--                        <select name="actName" lay-verify="mark">-->
+<!--                            <option value="">请选择</option>-->
+<!--                            [[range $indexa, $namea := .actNames ]]-->
+<!--                            <option value="[[ $namea ]]">[[ $namea ]]</option>-->
+<!--                            [[ end ]]-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">评分</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="rating" placeholder="0.0-5.0" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">评论</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="comments" placeholder="0-9999999" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">价格</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="price" placeholder="0-9999999" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">活动</label>
+                    <div class="layui-input-inline" >
+                        <select name="actName" lay-search>
+                            <option value="">请选择</option>
+                            [[range $indexa, $namea := .actNames ]]
+                            <option value="[[ $namea ]]">[[ $namea ]]</option>
+                            [[ end ]]
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">活动时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="actDate" id="s_date" autocomplete="off" value=""
+                               placeholder="请选择时间范围"  class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">关键词</label>
+                    <div class="layui-input-inline" >
+                        <input type="text" name="keyName"  class="layui-input">
+<!--                        <select name="keyName" lay-verify="mark" xm-select="select2" xm-select-skin="normal">-->
+<!--                            <option value="">请选择</option>-->
+<!--                            [[range $indexk, $namek := .keys ]]-->
+<!--                            <option value="[[ $namek ]]">[[ $namek ]]</option>-->
+<!--                            [[ end ]]-->
+<!--                        </select>-->
+                    </div>
+                </div>
+                <div class="layui-inline" style="margin-left: 50px;">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                    <button type="button" class="pear-btn pear-btn-md expand">
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
+
+<script type="text/html" id="user-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="addid">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增 id 任务
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="addidup">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增 更新 任务
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="addkey">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增 关键词 任务
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="addcategory">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增 类目 任务
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="addurl">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增 url 任务
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="addact">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增 活动 任务
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="upgtin">
+        更新gtin
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="setch">
+        设置抓取频率
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="isRun" id="isRun">
+        [[if .isRun]]
+        停止任务
+        [[else]]
+        开启任务
+        [[end]]
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="delKeys">
+        清除缓存
+    </button>
+<!--    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="delDow">-->
+<!--        清除下载-->
+<!--    </button>-->
+<!--    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="dow">-->
+<!--        下载-->
+<!--    </button>-->
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="doww">
+        导出
+    </button>
+    <div class="pear-btn  pear-btn-md">id [[.idsNum]] | [[.idsNum2]]</div>
+    <div class="pear-btn  pear-btn-md">关键词 [[.keysNum]] | [[.keysNum2]]</div>
+    <div class="pear-btn  pear-btn-md">url [[.urlsNum]] | [[.urlsNum2]]</div>
+    <div class="pear-btn  pear-btn-md">活动 [[.actsNum]] | [[.actsNum2]]</div>
+
+    <!--    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">-->
+    <!--        <i class="layui-icon layui-icon-delete"></i>-->
+    <!--        删除-->
+    <!--    </button>-->
+</script>
+
+
+<script type="text/html" id="user-updateTime">
+    {{layui.util.toDateString(d.UpdateTime, 'yyyy-MM-dd HH:mm:ss')}}
+</script>
+
+<div style="display: none;">
+    <div class="layer-top-id">
+        <form class="layui-form" action="" id="idsform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">id</label>
+                <div class="layui-col-md6">
+                    <textarea name="ids" placeholder="请输入id" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formid">立即提交</button>
+                    <button type="reset" id="idsre" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div style="display: none;">
+    <div class="layer-top-idup">
+        <form class="layui-form" action="" id="idsupform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">id</label>
+                <div class="layui-col-md6">
+                    <textarea name="ids" placeholder="请输入id" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formidup">立即提交</button>
+                    <button type="reset" id="idsupre" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div style="display: none;">
+    <div class="layer-top-key">
+        <form class="layui-form" action="" id="keyform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">关键词</label>
+                <div class="layui-col-md6">
+                    <textarea name="keys" placeholder="请输入关键词" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formkey">立即提交</button>
+                    <button type="reset" id="keyre" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div style="display: none;">
+    <div class="layer-top-url">
+        <form class="layui-form" action="" id="urlform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">url</label>
+                <div class="layui-col-md6">
+                    <textarea name="urls" placeholder="请输入url" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formurl">立即提交</button>
+                    <button type="reset" id="urlre" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="display: none;">
+    <div class="layer-top-act">
+        <form class="layui-form" action="" id="actform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">活动</label>
+                <div class="layui-col-md6">
+                    <textarea name="acts" placeholder="请输入活动url" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formact">立即提交</button>
+                    <button type="reset" id="actre" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div style="display: none;">
+    <div class="layer-top-gtin">
+        <form class="layui-form" action="" id="gtinform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">gtin</label>
+                <div class="layui-col-md6">
+                    <textarea name="gtin" placeholder="请输入id,gtin" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formgtin">立即提交</button>
+                    <button type="reset" id="gtinre" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<script type="text/html" id="img">
+    <img src="{{d.Img}}" style="" width="45" height="45" alt="">
+    <div hidden> {{d.Img}}</div>
+</script>
+
+<script type="text/html" id="mark">
+    <p style="color: #ff0000"> {{d.Mark}}</p>
+</script>
+
+<script type="text/html" id="organization-bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit">
+        <i class="layui-icon layui-icon-edit"></i></button>
+<!--    <button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="addDow">-->
+<!--        <i class="layui-icon pear-icon-download"></i></button>-->
+
+    <!--        <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i-->
+    <!--                class="layui-icon layui-icon-delete"></i></button>-->
+</script>
+<script src="/public/static/layui/layui.js"></script>
+<script src="/public/static/pear/pear.js"></script>
+
+<div class="floating-btn" >
+    <a href="#" class="btn-top">顶</a>
+    <a href="#" class="btn-bottom">底</a>
+</div>
+<div id="bottom">
+<script>
+    // 当文档加载完成后执行
+    document.addEventListener("DOMContentLoaded", function() {
+        // 获取悬浮球和两个内容区域的引用
+        const bottomSection = document.querySelector("#bottom");
+
+
+        // 当用户单击“Top”链接时，将页面滚动到顶部
+        document.querySelector(".btn-top").addEventListener("click", function(e) {
+            e.preventDefault(); // 防止默认行为
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth" // 平滑滚动
+            });
+        });
+
+        // 当用户单击“Bottom”链接时，将页面滚动到底部
+        document.querySelector(".btn-bottom").addEventListener("click", function(e) {
+            e.preventDefault(); // 防止默认行为
+            window.scrollTo({
+                top: bottomSection.offsetTop,
+                behavior: "smooth" // 平滑滚动
+            });
+        });
+    });
+    layui.use(['table', 'form', 'jquery', 'drawer', 'dropdown', 'dtree', 'toast', 'laydate', 'select'], function () {
+        let toast = layui.toast;
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let drawer = layui.drawer;
+        let dtree = layui.dtree;
+        let laydate = layui.laydate;//日期
+        let myDate = new Date();//获取当前时间设置选择时间的范围
+        let maxtime = myDate.getFullYear() + "-" + (myDate.getMonth() + 1) + "-" + (myDate.getDate());//拼接当前是时间
+        let select = layui.select;
+        //初始化选择时间控件
+        laydate.render({
+            elem: '#s_date'
+            , type: 'date'
+            , range: '~'
+            , max: maxtime//设置选择最大时间为当前
+            , loading: false
+            , calendar: true
+            , btns: ['clear', 'confirm', 'now']
+            , done: function (value, date) {
+                //这里时选中后触发事件
+                //value是选中的值
+                var time = value;
+            }
+        });
+        window.isRun = function () {
+                $.ajax({
+                    url: '/api/config/upIsRun',
+                    type: 'get',
+                    data: "",
+                    success: result => {
+                        toast.destroy();
+                        toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                        let isa =  document.getElementById('isRun')
+                        console.log(isa)
+                        if (isa.textContent == " 开启任务 ") {
+                            isa.textContent = " 停止任务 "
+                        }else{
+                            isa.textContent = " 开启任务 "
+                        }
+
+                    }
+                });
+        }
+
+        window.setch = function () {
+            layer.prompt({
+                formType: 0,
+                value: '',
+                title: '请输入频率（最大20,最小1,默认10）',
+                btn: ['确定', '取消'], //按钮，
+                btnAlign: 'c'
+            }, function (value, index) {
+                console.log(value)
+                $.ajax({
+                    url: '/api/config/setCh',
+                    type: 'POST',
+                    data: "num=" + value,
+                    success: result => {
+                        console.log(result.code)
+                        toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                        //domid.close()
+                        $('#idsre').click()
+                    }
+                });
+                layer.close(index);
+                //执行审批不通过的内容 此时获取到的数据为value
+            });
+        }
+
+        window.delKeys = function () {
+            $.ajax({
+                url: '/api/config/delKeys',
+                type: 'GET',
+                data: "",
+                success: result => {
+                    console.log(result.code)
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    //domid.close()
+                }
+            });
+        }
+        window.delDow = function () {
+            $.ajax({
+                url: '/api/config/delDow',
+                type: 'GET',
+                data: "",
+                success: result => {
+                    console.log(result.code)
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    //domid.close()
+                }
+            });
+        }
+        window.dow = function () {
+            window.open("/api/config/dow")
+
+        }
+
+        window.addDow = function (obj) {
+            $.ajax({
+                url: '/api/config/addDow?id=' + obj.data.Id,
+                type: 'GET',
+                data: "",
+                success: result => {
+                    console.log(result.code)
+                    toast.destroy();
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    //domid.close()
+                }
+            });
+        }
+
+        form.on('submit(formid)', function (data) {
+            $.ajax({
+                url: '/api/product/crawlerId',
+                type: 'POST',
+                data: data.field,
+                success: result => {
+                    console.log(result.code)
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    //domid.close()
+                    $('#idsre').click()
+                }
+            });
+            return false;
+        });
+
+
+        form.on('submit(formidup)', function (data) {
+            $.ajax({
+                url: '/api/product/crawlerIdUp',
+                type: 'POST',
+                data: data.field,
+                success: result => {
+                    console.log(result.code)
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    //domid.close()
+                    $('#idsupre').click()
+                }
+            });
+            return false;
+        });
+
+        form.on('submit(formkey)', function (data) {
+            $.ajax({
+                url: '/api/product/crawlerKey',
+                type: 'POST',
+                data: data.field,
+                success: result => {
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    domkey.close()
+                    $('#keyre').click()
+                }
+            });
+            return false;
+        });
+        form.on('submit(formurl)', function (data) {
+            $.ajax({
+                url: '/api/product/crawlerUrl',
+                type: 'POST',
+                data: data.field,
+                success: result => {
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    domkey.close()
+                    $('#urlre').click()
+                }
+            });
+            return false;
+        });
+        form.on('submit(formact)', function (data) {
+            $.ajax({
+                url: '/api/product/crawlerAct',
+                type: 'POST',
+                data: data.field,
+                success: result => {
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    domkey.close()
+                    $('#actre').click()
+                }
+            });
+            return false;
+        });
+
+        form.on('submit(formgtin)', function (data) {
+            $.ajax({
+                url: '/api/product/uploadGtin',
+                type: 'POST',
+                data: data.field,
+                success: result => {
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    domkey.close()
+                    $('#gtinre').click()
+                }
+            });
+            return false;
+        });
+
+        // dtree.render({
+        //     elem: "#categoryTree",
+        //     initLevel: "1",
+        //     method: 'get',
+        //     url: "/api/category/getCategory",
+        //     // url: "/public/static/admin/data/dtree.json",
+        //     select: true
+        // });
+
+        formToggle({
+            elem: "#userForm",
+        });
+
+        function formToggle(options) {
+            var defaultsOpt = {
+                isExpand: false,
+                prefixIcon: "layui-icon",
+                toggleIcon: ['layui-icon-down', 'layui-icon-up'],
+                toggleText: ['展开', '折叠'],
+            }
+            var opt = $.extend({}, defaultsOpt, options);
+            var elem = opt.elem; // 绑定的表单元素,必填
+            var min = opt.min; // 最小显示数,默认显示一行
+            var isExpand = opt.isExpand; // 初始展开
+            var prefixIcon = opt.prefixIcon + " "; // 图标前缀
+            var toggleIcon = opt.toggleIcon; // 折叠和展开时的图标类[unExpandIcon, ExpandIcon]
+            var toggleText = opt.toggleText; // 折叠和展开时的文本
+
+            var eleDOM = $(elem + " .layui-inline");
+            var firstElTop = eleDOM.first().offset().top;
+            var targetEl = eleDOM.filter(function (index) {
+                var isGtMin = (index + 1) > min;
+                var isGtFirstElTop = $(this).offset().top > firstElTop;
+                var isNeqLast = (index + 1) != eleDOM.length;
+                return min ? isGtMin && isNeqLast : isGtFirstElTop && isNeqLast;
+            });
+
+            var unExpandIcon = prefixIcon + toggleIcon[0];
+            var expandIcon = prefixIcon + toggleIcon[1];
+            var unExpandText = toggleText[0];
+            var expandText = toggleText[1];
+            var btnSelector = elem + " .expand";
+            $(btnSelector).append("<i></i>")
+            if (targetEl.length > 0) {
+                if (isExpand) {
+                    $(btnSelector).prepend("<span>" + expandText + "</span>");
+                    $(btnSelector + ">i").addClass(expandIcon);
+                } else {
+                    $(btnSelector).prepend("<span>" + unExpandText + "</span>")
+                    $(btnSelector + ">i").addClass(unExpandIcon)
+                    targetEl.addClass("layui-hide");
+                }
+                $(btnSelector).click(function () {
+                    isExpand = !isExpand;
+                    if (isExpand) {
+                        $(btnSelector + ">span").html(expandText);
+                        $(btnSelector + ">i").removeClass(unExpandIcon).addClass(expandIcon);
+                        targetEl.removeClass("layui-hide")
+                    } else {
+                        $(btnSelector + ">span").html(unExpandText);
+                        $(btnSelector + ">i").removeClass(expandIcon).addClass(unExpandIcon);
+                        targetEl.addClass("layui-hide")
+                    }
+                })
+            }
+        }
+
+        let cols = [
+            [
+                //     {
+                //     type: 'checkbox'
+                // },
+                {
+                    title: '标记',
+                    field: 'Mark',
+                    align: 'center',
+                    templet: '#mark'
+                },
+                {
+                    title: '备注',
+                    field: 'Remark',
+                    align: 'center',
+                },
+                {
+                    title: 'id',
+                    field: 'Id',
+                    align: 'center',
+                    width: 110
+                },
+                {
+                    title: '图片',
+                    field: 'Img',
+                    align: 'center',
+                    templet: '#img'
+                },
+                {
+                    title: '类型',
+                    field: 'CodeType',
+                    align: 'center'
+                },
+                {
+                    title: '商码',
+                    field: 'Code',
+                    align: 'center'
+                },
+                {
+                    title: '类目',
+                    field: 'CategoryName',
+                    align: 'center'
+                },
+                {
+                    title: '品牌',
+                    field: 'Brands',
+                    align: 'center'
+                },
+                {
+                    title: '标签',
+                    field: 'Tags',
+                    align: 'center',
+                    // width: 100
+                },
+                {
+                    title: '标题',
+                    field: 'Title',
+                    align: 'center'
+                },
+                {
+                    title: '评分',
+                    field: 'Rating',
+                    align: 'center',
+                    // width: 80
+                },
+                {
+                    title: '评论',
+                    field: 'Comments',
+                    align: 'center'
+                },
+                {
+                    title: '价格',
+                    field: 'Price',
+                    align: 'center'
+                },
+                {
+                    title: '卖家',
+                    field: 'Sellers',
+                    align: 'center'
+                },
+                {
+                    title: '配送',
+                    field: 'Distribution',
+                    align: 'center'
+                },
+                {
+                    title: '变体1',
+                    field: 'Variants1',
+                    align: 'center'
+                },
+                {
+                    title: '变体2',
+                    field: 'Variants2',
+                    align: 'center'
+                },
+                {
+                    title: '变体id',
+                    field: 'VariantsId',
+                    align: 'center'
+                },
+                {
+                    title: '配送',
+                    field: 'ArrivalTime',
+                    align: 'center'
+                },
+                {
+                    title: 'StartingFrom',
+                    field: 'StarFrom',
+                    align: 'center'
+                },
+                {
+                    title: '更新',
+                    field: 'UpdateTime',
+                    align: 'center',
+                    templet: '#user-updateTime',
+                },
+                {
+                    title: '操作',
+                    toolbar: '#organization-bar',
+                    align: 'center',
+                    width: 120
+                }
+            ]
+        ]
+
+        table.render({
+            elem: '#user-table',
+            url: '/api/product/getProduct',
+            page: true,
+            cols: cols,
+            skin: 'line',
+            loading: false,
+            toolbar: '#user-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+            done: function (res, curr, count) {
+                $("#layui-layer-shade1").remove()
+                $("#layui-layer1").remove()
+                $("#layui-layer-move").remove()
+
+
+            }
+        });
+
+
+        table.on('tool(user-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'addDow') {
+                window.addDow(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'addid') {
+                window.addid();
+            }else if (obj.event === 'addidup') {
+                window.addidup();
+            }  else if (obj.event === 'addkey') {
+                window.addkey();
+            } else if (obj.event === 'addcategory') {
+                window.addcategory();
+            }else if (obj.event === 'addurl') {
+                window.addurl();
+            } else if (obj.event === 'addact') {
+                window.addact();
+            } else if (obj.event === 'upgtin') {
+                window.upgtin();
+            } else if (obj.event === 'setch') {
+                window.setch();
+            } else if (obj.event === 'isRun') {
+                window.isRun();
+            }
+
+
+            else if (obj.event === 'delKeys') {
+                window.delKeys();
+            } else if (obj.event === 'delDow') {
+                window.delDow();
+            } else if (obj.event === 'dow') {
+                window.dow();
+            } else if (obj.event === 'doww') {
+                window.doww();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
+
+        form.on('submit(user-query)', function (data) {
+            table.reload('user-table', {
+                where: data.field
+            })
+            return false;
+        });
+
+        form.on('switch(user-enable)', function (obj) {
+            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+        });
+        var domid;
+        var domkey;
+        window.addid = function () {
+            domid = drawer.open({
+                direction: "top",
+                dom: ".layer-top-id",
+                distance: "30%"
+            });
+        }
+
+        window.addidup = function () {
+            domid = drawer.open({
+                direction: "top",
+                dom: ".layer-top-idup",
+                distance: "30%"
+            });
+        }
+        window.addkey = function () {
+            domkey = drawer.open({
+                direction: "top",
+                dom: ".layer-top-key",
+                distance: "30%"
+            });
+        }
+        window.addcategory = function () {
+            layer.open({
+                type: 2,
+                title: '类目任务',
+                shade: 0.1,
+                area: ['400px', '380px'],
+                content: '/admin/product/crawler-edit'
+            });
+        }
+
+
+        window.addurl = function () {
+            domkey = drawer.open({
+                direction: "top",
+                dom: ".layer-top-url",
+                distance: "30%"
+            });
+        }
+        window.addact = function () {
+            domkey = drawer.open({
+                direction: "top",
+                dom: ".layer-top-act",
+                distance: "30%"
+            });
+        }
+        window.doww = function (){
+            var oldData = table.cache["user-table"];
+            var datas = new Array()
+            for (i=0;i<oldData.length;i++){
+                datas.push(oldData[i].Id)
+            }
+            $.ajax({
+                url: '/api/config/addDoww',
+                type: 'POST',
+                data: "ids="+datas,
+                success: result => {
+                    window.open("/api/config/doww")
+                }
+            });
+
+        }
+        window.upgtin = function () {
+            domkey = drawer.open({
+                direction: "top",
+                dom: ".layer-top-gtin",
+                distance: "30%"
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改',
+                shade: 0.1,
+                area: ['500px', '300px'],
+                content: '/admin/product/edit?id=' + obj.data.Id + "&remark=" + obj.data.Remark + "&mark=" + obj.data.Mark
+            });
+        }
+
+        window.remove = function (obj) {
+            layer.confirm('确定要删除该用户', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                $.ajax({
+                    url: MODULE_PATH + "remove/" + obj.data['userId'],
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        if (result.success) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                obj.del();
+                            });
+                        } else {
+                            layer.msg(result.msg, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].userId + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要删除这些数据', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+
+                $.ajax({
+                    url: MODULE_PATH + "batchRemove/" + ids,
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+
+                        if (result.success) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                table.reload('user-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+        window.refresh = function (param) {
+            table.reload('user-table');
+        }
+        layui.code();
+        
+    })
+
+
+</script>
+</body>
+
+</html>

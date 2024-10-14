@@ -1,0 +1,78 @@
+[
+  {
+    "id": 1,
+    "title": "产品空间",
+    "icon": "layui-icon layui-icon-console",
+    "type": 0,
+    "href": "",
+    "children": [
+      {
+        "id": 10,
+        "title": "商品库",
+        "icon": "layui-icon layui-icon-face-cry",
+        "type": 1,
+        "openType": "_iframe",
+        "href": "/admin/product/product-table"
+      },
+
+      {
+        "id": 11,
+        "title": "卖家信息",
+        "icon": "layui-icon layui-icon-face-cry",
+        "type": 1,
+        "openType": "_iframe",
+        "href": "/admin/storeInformation/store-information"
+      },
+      {
+        "id": 12,
+        "title": "产品销量",
+        "icon": "layui-icon layui-icon-face-cry",
+        "type": 1,
+        "openType": "_iframe",
+        "href": "/admin/productSales/product-sales"
+      },
+      {
+        "id": 13,
+        "title": "数据关联",
+        "icon": "layui-icon layui-icon-face-cry",
+        "type": 1,
+        "openType": "_iframe",
+        "href": "/admin/product/chart"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "后台空间",
+    "icon": "layui-icon layui-icon-console",
+    "type": 0,
+    "href": "",
+    "children": [
+
+      {
+        "id": 21,
+        "title": "购物车",
+        "icon": "layui-icon layui-icon-face-cry",
+        "type": 1,
+        "openType": "_iframe",
+        "href": "/admin/shopping/product-shopping"
+      },
+      {
+        "id": 22,
+        "title": "定时任务",
+        "icon": "layui-icon layui-icon-face-cry",
+        "type": 1,
+        "openType": "_iframe",
+        "href": "/admin/timedUploads/timed-uploads"
+      },
+      {
+        "id": 23,
+        "title": "未读邮件",
+        "icon": "layui-icon layui-icon-face-cry",
+        "type": 1,
+        "openType": "_iframe",
+        "href": "/admin/mail/mail-table"
+      }
+    ]
+  }
+]

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>销量信息</title>
+    <!--    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>-->
+    <!-- 引入组件库 -->
+    <!--    <script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+    <!-- 引入样式 -->
+    <!--    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+    <link rel="stylesheet" href="../../public/static/pear/css/pear.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <style>
+        .expand.pear-btn:hover {
+            color: currentColor;
+            background: none;
+        }
+
+        .expand.pear-btn {
+            border: 1px solid rgba(255, 255, 255, 0)
+        }
+        /* 样式：悬浮球 */
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .floating-btn a {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px 10px;
+            border-radius: 50px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .floating-btn a:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form id="userForm" class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">ItemID</label>
+                    <div class="layui-input-inline">
+                        <textarea name="itemId" placeholder="" class="layui-textarea" style="width: 100%;"></textarea>
+                    </div>
+                </div>
+<!--            <div class="layui-inline">-->
+<!--                <label class="layui-form-label">店铺ID</label>-->
+<!--                <div class="layui-input-inline">-->
+<!--                    <input type="text" name="AffiliatedCompany" placeholder="" class="layui-input">-->
+<!--                </div>-->
+<!--            </div>-->
+            </div>
+                <div class="layui-inline" style="margin-left: 50px;">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                    <button type="button" class="pear-btn pear-btn-md expand">
+                    </button>
+                </div>
+        </form>
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
+
+<script type="text/html" id="user-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        添加数据
+    </button>
+
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="update">
+        更新数据
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
+    <span> [[.num]]</span>
+
+
+
+
+    <!--    <div class="pear-btn   pear-btn-md"> [[.MsgCh]]</div>-->
+</script>
+
+
+
+<script type="text/html" id="day">
+    <span>1 : {{ d.Day01 }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></br>
+    <span>2 : {{ d.Day02 }}</span></br>
+    <span>3 : {{ d.Day03 }}</span></br>
+    <span>4 : {{ d.Day04 }}</span></br>
+    <span>5 : {{ d.Day05 }}</span></br>
+    <span>6 : {{ d.Day06 }}</span>
+</script>
+
+<script type="text/html" id="img">
+    <img src="{{d.Img}}" style="" width="45" height="45" alt="">
+    <div hidden> {{d.Img}}</div>
+</script>
+
+
+
+<div style="display: none;">
+    <div class="layer-top-add">
+        <form class="layui-form" action="" id="addform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">id</label>
+                <div class="layui-col-md6">
+                    <textarea name="sales" placeholder="请输入: itemID,店铺ID" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formadd">立即提交</button>
+                    <button type="reset" id="idsadd" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="display: none;">
+    <div class="layer-top-up">
+        <form class="layui-form" action="" id="upform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">id</label>
+                <div class="layui-col-md6">
+                    <textarea name="ids" placeholder="请输入: itemID" class="layui-textarea"></textarea>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formup">立即提交</button>
+                    <button type="reset" id="idsup" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<!--<script type="text/html" id="user-createDate">-->
+<!--    {{layui.util.toDateString(d.UpdateDate, 'MM-dd HH:mm:ss')}}-->
+<!--</script>-->
+
+<script type="text/html" id="organization-bar">
+<!--    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit">-->
+<!--        <i class="layui-icon layui-icon-edit"></i></button>-->
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i
+            class="layui-icon layui-icon-delete"></i></button>
+</script>
+<div class="floating-btn" >
+    <a href="#" class="btn-top">顶</a>
+    <a href="#" class="btn-bottom">底</a>
+</div>
+<div id="bottom"></div>
+<script src="../../public/static/layui/layui.js"></script>
+<script src="../../public/static/pear/pear.js"></script>
+<script>
+    // 当文档加载完成后执行
+    document.addEventListener("DOMContentLoaded", function() {
+        // 获取悬浮球和两个内容区域的引用
+        const bottomSection = document.querySelector("#bottom");
+
+
+        // 当用户单击“Top”链接时，将页面滚动到顶部
+        document.querySelector(".btn-top").addEventListener("click", function(e) {
+            e.preventDefault(); // 防止默认行为
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth" // 平滑滚动
+            });
+        });
+
+        // 当用户单击“Bottom”链接时，将页面滚动到底部
+        document.querySelector(".btn-bottom").addEventListener("click", function(e) {
+            e.preventDefault(); // 防止默认行为
+            window.scrollTo({
+                top: bottomSection.offsetTop,
+                behavior: "smooth" // 平滑滚动
+            });
+        });
+    });
+
+    layui.use(['table', 'form', 'jquery', 'drawer', 'dropdown', 'upload', 'toast', 'laydate'], function () {
+        let table = layui.table;
+        var upload = layui.upload;
+        let form = layui.form;
+        let toast = layui.toast;
+        let $ = layui.jquery;
+        let drawer = layui.drawer;
+        let laydate = layui.laydate;//日期
+        let myDate = new Date();//获取当前时间设置选择时间的范围
+        let maxtime = myDate.getFullYear() + "-" + (myDate.getMonth() + 1) + "-" + (myDate.getDate());//拼接当前是时间
+
+        //初始化选择时间控件
+        laydate.render({
+            elem: '#s_date'
+            , type: 'date'
+            , range: '~'
+            , max: maxtime//设置选择最大时间为当前
+            , loading: false
+            , calendar: true
+            , btns: ['clear', 'confirm', 'now']
+            , done: function (value, date) {
+                //这里时选中后触发事件
+                //value是选中的值
+                var time = value;
+            }
+        });
+
+
+
+
+        formToggle({
+            elem: "#userForm",
+        });
+
+        function formToggle(options) {
+            var defaultsOpt = {
+                isExpand: false,
+                prefixIcon: "layui-icon",
+                toggleIcon: ['layui-icon-down', 'layui-icon-up'],
+                toggleText: ['展开', '折叠'],
+            }
+            var opt = $.extend({}, defaultsOpt, options);
+            var elem = opt.elem; // 绑定的表单元素,必填
+            var min = opt.min; // 最小显示数,默认显示一行
+            var isExpand = opt.isExpand; // 初始展开
+            var prefixIcon = opt.prefixIcon + " "; // 图标前缀
+            var toggleIcon = opt.toggleIcon; // 折叠和展开时的图标类[unExpandIcon, ExpandIcon]
+            var toggleText = opt.toggleText; // 折叠和展开时的文本
+
+            var eleDOM = $(elem + " .layui-inline");
+            var firstElTop = eleDOM.first().offset().top;
+            var targetEl = eleDOM.filter(function (index) {
+                var isGtMin = (index + 1) > min;
+                var isGtFirstElTop = $(this).offset().top > firstElTop;
+                var isNeqLast = (index + 1) != eleDOM.length;
+                return min ? isGtMin && isNeqLast : isGtFirstElTop && isNeqLast;
+            });
+
+            var unExpandIcon = prefixIcon + toggleIcon[0];
+            var expandIcon = prefixIcon + toggleIcon[1];
+            var unExpandText = toggleText[0];
+            var expandText = toggleText[1];
+            var btnSelector = elem + " .expand";
+            $(btnSelector).append("<i></i>")
+            if (targetEl.length > 0) {
+                if (isExpand) {
+                    $(btnSelector).prepend("<span>" + expandText + "</span>");
+                    $(btnSelector + ">i").addClass(expandIcon);
+                } else {
+                    $(btnSelector).prepend("<span>" + unExpandText + "</span>")
+                    $(btnSelector + ">i").addClass(unExpandIcon)
+                    targetEl.addClass("layui-hide");
+                }
+                $(btnSelector).click(function () {
+                    isExpand = !isExpand;
+                    if (isExpand) {
+                        $(btnSelector + ">span").html(expandText);
+                        $(btnSelector + ">i").removeClass(unExpandIcon).addClass(expandIcon);
+                        targetEl.removeClass("layui-hide")
+                    } else {
+                        $(btnSelector + ">span").html(unExpandText);
+                        $(btnSelector + ">i").removeClass(expandIcon).addClass(unExpandIcon);
+                        targetEl.addClass("layui-hide")
+                    }
+                })
+            }
+        }
+
+        let cols = [
+            [
+                    {
+                    type: 'checkbox'
+                },
+                {
+                    title: 'ItemID',
+                    field: 'ITEMID',
+                    align: 'center',
+                },
+                {
+                    title: '图片',
+                    field: 'Img',
+                    align: 'center',
+                    templet: '#img'
+                },
+                {
+                    title: '店铺ID',
+                    field: 'CatalogSellerId',
+                    align: 'center',
+                },
+                {
+                    title: '最近6天',
+                    field: 'Day01',
+                    align: 'center',
+                    templet: '#day',
+                    width: 80
+                },
+                {
+                    title: '最近7天',
+                    field: 'Day07',
+                    align: 'center'
+                },
+                {
+                    title: '最近15天',
+                    field: 'Day15',
+                    align: 'center'
+                },
+                {
+                    title: '最近30天',
+                    field: 'Day30',
+                    align: 'center'
+                },
+                {
+                    title: '最近60天',
+                    field: 'Day60',
+                    align: 'center'
+                },
+                {
+                    title: '最近90天',
+                    field: 'Day90',
+                    align: 'center'
+                },
+                // {
+                //     title: '更新时间',
+                //     field: 'UpdateDate',
+                //     align: 'center',
+                //     templet: '#user-updateDate',
+                //     width: 120
+                // },
+                {
+                    title: '创建时间',
+                    field: 'CreateDate',
+                    align: 'center',
+                    width: 110
+                },
+                {
+                    title: '操作',
+                    toolbar: '#organization-bar',
+                    align: 'center',
+                    width: 110
+                }
+            ]
+        ]
+
+        table.render({
+            elem: '#user-table',
+            url: '/api/productSales/getProductSales',
+            page: true,
+            cols: cols,
+            skin: 'line',
+            loading: false,
+            toolbar: '#user-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+            done: function (res, curr, count) {
+                $("#layui-layer-shade1").remove()
+                $("#layui-layer1").remove()
+                $("#layui-layer-move").remove()
+
+
+            }
+        });
+
+
+        form.on('submit(formup)', function (data) {
+            $.ajax({
+                url: '/api/productSales/updateDate',
+                type: 'POST',
+                data: data.field,
+                success: result => {
+                    console.log(result.code)
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    //domid.close()
+                    $('#idsup').click()
+                }
+            });
+            return false;
+        });
+        form.on('submit(formadd)', function (data) {
+            $.ajax({
+                url: '/api/productSales/add',
+                type: 'POST',
+                data: data.field,
+                success: result => {
+                    console.log(result.code)
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    //domid.close()
+                    $('#idsadd').click()
+                }
+            });
+            return false;
+        });
+
+
+        window.update = function () {
+                domid = drawer.open({
+                    direction: "top",
+                    dom: ".layer-top-up",
+                    distance: "30%"
+                });
+
+
+        }
+
+        table.on('tool(user-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'dow') {
+                window.dow();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            } else if (obj.event === 'update') {
+                window.update(obj);
+            } else if (obj.event === 'add') {
+                window.add(obj);
+            }
+
+        });
+
+        form.on('submit(user-query)', function (data) {
+            table.reload('user-table', {
+                where: data.field
+            })
+            return false;
+        });
+
+        form.on('switch(user-enable)', function (obj) {
+            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+        });
+        var domid;
+        var domkey;
+
+
+        window.add = function (obj) {
+            domid = drawer.open({
+                direction: "top",
+                dom: ".layer-top-add",
+                distance: "30%"
+            });
+        }
+
+        window.remove = function (obj) {
+            layer.confirm('确定要删除该条数据', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                $.ajax({
+                    url: "/api/productSales/remove" ,
+                    dataType: 'json',
+                    data: "ids=" + obj.data.ITEMID,
+                    type: 'post',
+                    success: function (result) {
+                        if (result.code = 0) {
+                            toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                            obj.del();
+                        } else {
+                            obj.del();
+                            toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let sids = "";
+            for (let i = 0; i < data.length; i++) {
+                sids += data[i].ITEMID + ",";
+            }
+            sids = sids.substr(0, sids.length - 1);
+            layer.confirm('确定要删除这些数据', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+
+                $.ajax({
+                    url: "/api/productSales/remove",
+                    data: "ids=" + sids,
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (result) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                setTimeout(function () {
+                                     location.reload();;
+                                }, 1000);
+                            });
+                    }
+                })
+            });
+        }
+
+
+
+        window.refresh = function (param) {
+            table.reload('user-table');
+        }
+        layui.code();
+
+        upload.render({
+            elem: '.upload',
+            multiple: true,
+            accept: 'file',
+            exts: 'xlsx',
+            done: function (res, index, upload) {
+                //获取当前触发上传的元素，一般用于 elem 绑定 class 的情况，注意：此乃 layui 2.1.0 新增
+                var item = this.item;
+                console.log(res.code)
+                if (res.code==0){
+                    toast.success({title: '通知', message: res.msg, position: 'topCenter'});
+                    setTimeout(function () {
+                        location.reload();
+                    }, 5000);
+                }else{
+                    toast.error({title: '通知', message: res.msg, position: 'topCenter'});
+                }
+
+            }
+
+
+        })
+    })
+
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>备货</title>
+    <!--    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>-->
+    <!-- 引入组件库 -->
+    <!--    <script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+    <!-- 引入样式 -->
+    <!--    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+    <link rel="stylesheet" href="../../public/static/pear/css/pear.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <style>
+        .expand.pear-btn:hover {
+            color: currentColor;
+            background: none;
+        }
+
+        .expand.pear-btn {
+            border: 1px solid rgba(255, 255, 255, 0)
+        }
+        /* 样式：悬浮球 */
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .floating-btn a {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px 10px;
+            border-radius: 50px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .floating-btn a:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form id="userForm" class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">itemId</label>
+                    <div class="layui-input-inline">
+                        <textarea name="itemId" placeholder="" class="layui-textarea" style="width: 100%;"></textarea>
+                    </div>
+                </div>
+            </div>
+                <div class="layui-inline" style="margin-left: 50px;">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                    <button type="button" class="pear-btn pear-btn-md expand">
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
+
+<script type="text/html" id="user-toolbar">
+    <button class="pear-btn pear-btn-md pear-btn-primary upload"
+            lay-data="{url: '/api/stockAvailability/upload', accept: 'file' , multiple: 'true'}">
+        上传表格
+    </button>
+
+
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="dow">
+        下载表格
+    </button>
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="img">
+        获取图片
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="delmsg">
+        删除信息
+    </button>
+
+    <!--    <div class="pear-btn   pear-btn-md"> [[.MsgCh]]</div>-->
+</script>
+
+<script type="text/html" id="img">
+    <img src="{{d.Img}}" style="" width="45" height="45" alt="">
+    <div hidden> {{d.Img}}</div>
+</script>
+<script type="text/html" id="user-updateDate">
+    {{layui.util.toDateString(d.UpdateDate, 'MM-dd HH:mm:ss')}}
+</script>
+<div class="floating-btn" >
+    <a href="#" class="btn-top">顶</a>
+    <a href="#" class="btn-bottom">底</a>
+</div>
+<div id="bottom"></div>
+<script src="../../public/static/layui/layui.js"></script>
+<script src="../../public/static/pear/pear.js"></script>
+<script>
+    // 当文档加载完成后执行
+    document.addEventListener("DOMContentLoaded", function() {
+        // 获取悬浮球和两个内容区域的引用
+        const bottomSection = document.querySelector("#bottom");
+
+
+        // 当用户单击“Top”链接时，将页面滚动到顶部
+        document.querySelector(".btn-top").addEventListener("click", function(e) {
+            e.preventDefault(); // 防止默认行为
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth" // 平滑滚动
+            });
+        });
+
+        // 当用户单击“Bottom”链接时，将页面滚动到底部
+        document.querySelector(".btn-bottom").addEventListener("click", function(e) {
+            e.preventDefault(); // 防止默认行为
+            window.scrollTo({
+                top: bottomSection.offsetTop,
+                behavior: "smooth" // 平滑滚动
+            });
+        });
+    });
+
+    layui.use(['table', 'form', 'jquery', 'drawer', 'dropdown', 'upload', 'toast', 'laydate'], function () {
+        let table = layui.table;
+        var upload = layui.upload;
+        let form = layui.form;
+        let toast = layui.toast;
+        let $ = layui.jquery;
+        let drawer = layui.drawer;
+        let laydate = layui.laydate;//日期
+        let myDate = new Date();//获取当前时间设置选择时间的范围
+        let maxtime = myDate.getFullYear() + "-" + (myDate.getMonth() + 1) + "-" + (myDate.getDate());//拼接当前是时间
+
+        //初始化选择时间控件
+        laydate.render({
+            elem: '#s_date'
+            , type: 'date'
+            , range: '~'
+            , max: maxtime//设置选择最大时间为当前
+            , loading: false
+            , calendar: true
+            , btns: ['clear', 'confirm', 'now']
+            , done: function (value, date) {
+                //这里时选中后触发事件
+                //value是选中的值
+                var time = value;
+            }
+        });
+
+
+
+
+        formToggle({
+            elem: "#userForm",
+        });
+
+        function formToggle(options) {
+            var defaultsOpt = {
+                isExpand: false,
+                prefixIcon: "layui-icon",
+                toggleIcon: ['layui-icon-down', 'layui-icon-up'],
+                toggleText: ['展开', '折叠'],
+            }
+            var opt = $.extend({}, defaultsOpt, options);
+            var elem = opt.elem; // 绑定的表单元素,必填
+            var min = opt.min; // 最小显示数,默认显示一行
+            var isExpand = opt.isExpand; // 初始展开
+            var prefixIcon = opt.prefixIcon + " "; // 图标前缀
+            var toggleIcon = opt.toggleIcon; // 折叠和展开时的图标类[unExpandIcon, ExpandIcon]
+            var toggleText = opt.toggleText; // 折叠和展开时的文本
+
+            var eleDOM = $(elem + " .layui-inline");
+            var firstElTop = eleDOM.first().offset().top;
+            var targetEl = eleDOM.filter(function (index) {
+                var isGtMin = (index + 1) > min;
+                var isGtFirstElTop = $(this).offset().top > firstElTop;
+                var isNeqLast = (index + 1) != eleDOM.length;
+                return min ? isGtMin && isNeqLast : isGtFirstElTop && isNeqLast;
+            });
+
+            var unExpandIcon = prefixIcon + toggleIcon[0];
+            var expandIcon = prefixIcon + toggleIcon[1];
+            var unExpandText = toggleText[0];
+            var expandText = toggleText[1];
+            var btnSelector = elem + " .expand";
+            $(btnSelector).append("<i></i>")
+            if (targetEl.length > 0) {
+                if (isExpand) {
+                    $(btnSelector).prepend("<span>" + expandText + "</span>");
+                    $(btnSelector + ">i").addClass(expandIcon);
+                } else {
+                    $(btnSelector).prepend("<span>" + unExpandText + "</span>")
+                    $(btnSelector + ">i").addClass(unExpandIcon)
+                    targetEl.addClass("layui-hide");
+                }
+                $(btnSelector).click(function () {
+                    isExpand = !isExpand;
+                    if (isExpand) {
+                        $(btnSelector + ">span").html(expandText);
+                        $(btnSelector + ">i").removeClass(unExpandIcon).addClass(expandIcon);
+                        targetEl.removeClass("layui-hide")
+                    } else {
+                        $(btnSelector + ">span").html(unExpandText);
+                        $(btnSelector + ">i").removeClass(expandIcon).addClass(unExpandIcon);
+                        targetEl.addClass("layui-hide")
+                    }
+                })
+            }
+        }
+
+        let cols = [
+            [
+                    {
+                    type: 'checkbox'
+                },
+                {
+                    title: 'ItemId',
+                    field: 'ItemId',
+                    align: 'center',
+                },
+                {
+                    title: '销量账号',
+                    field: 'SalesUser',
+                    align: 'center',
+
+                },
+                {
+                    title: '图片',
+                    field: 'Img',
+                    align: 'center',
+                    templet: '#img'
+                },
+                {
+                    title: '仓易sku',
+                    field: 'CySku',
+                    align: 'center',
+                },
+                {
+                    title: '产品名',
+                    field: 'CyName',
+                    align: 'center'
+                },
+                {
+                    title: 'gtin',
+                    field: 'Gtin',
+                    align: 'center'
+                },
+                {
+                    title: '平台sku',
+                    field: 'PtSku',
+                    align: 'center'
+                },
+                {
+                    title: '英文名',
+                    field: 'Declaration',
+                    align: 'center'
+                },
+                {
+                    title: '备货数量',
+                    field: 'Num',
+                    align: 'center'
+                },
+                {
+                    title: '发货仓库',
+                    field: 'Warehouse',
+                    align: 'center',
+                },
+                {
+                    title: '备货天数',
+                    field: 'LeadTime',
+                    align: 'center',
+                },
+                {
+                    title: '在途数量',
+                    field: 'TransitNum',
+                    align: 'center',
+                },
+                {
+                    title: '在库数量',
+                    field: 'LibraryNum',
+                    align: 'center',
+
+                },
+                {
+                    title: '总销量',
+                    field: 'Counts',
+                    align: 'center',
+
+                },
+                {
+                    title: '加权日均',
+                    field: 'Weighted',
+                    align: 'center',
+
+                },
+                {
+                    title: '备注1',
+                    field: 'Remarks1',
+                    align: 'center',
+
+                },
+                {
+                    title: '备注2',
+                    field: 'Remarks2',
+                    align: 'center',
+
+                },
+                {
+                    title: '更新时间',
+                    field: 'UpdateDate',
+                    align: 'center',
+                    templet: '#user-updateDate',
+                    width: 120
+                },
+                // {
+                //     title: '操作',
+                //     toolbar: '#organization-bar',
+                //     align: 'center',
+                //     width: 110
+                // }
+            ]
+        ]
+
+        table.render({
+            elem: '#user-table',
+            url: '/api/stockAvailability/getStockAvailability',
+            page: true,
+            cols: cols,
+            skin: 'line',
+            loading: false,
+            toolbar: '#user-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+            done: function (res, curr, count) {
+                $("#layui-layer-shade1").remove()
+                $("#layui-layer1").remove()
+                $("#layui-layer-move").remove()
+
+
+            }
+        });
+        window.delmsg = function () {
+                $.ajax({
+                    url: '/api/stockAvailability/delMsg',
+                    type: 'GET',
+                    data: "",
+                    success: result => {
+                        console.log(result.code)
+                        toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    }
+                });
+        }
+
+
+        window.dow = function () {
+            window.open("/api/stockAvailability/dow")
+        }
+        form.on('submit(formid)', function (data) {
+            $.ajax({
+                url: '/api/shopping/upIds',
+                type: 'POST',
+                data: data.field,
+                success: result => {
+                    console.log(result.code)
+                    toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                    //domid.close()
+                    $('#idsre').click()
+                }
+            });
+            return false;
+        });
+
+        table.on('tool(user-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'addDow') {
+                window.addDow(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'dow') {
+                window.dow();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            } else if (obj.event === 'delmsg') {
+                window.delmsg();
+            } else if (obj.event === 'img') {
+                window.dowimg(obj);
+            }
+        });
+
+        form.on('submit(user-query)', function (data) {
+            table.reload('user-table', {
+                where: data.field
+            })
+            return false;
+        });
+
+        form.on('switch(user-enable)', function (obj) {
+            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+        });
+        var domid;
+        var domkey;
+
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改购物车',
+                shade: 0.1,
+                area: ['500px', '450px'],
+                content: '/admin/stockAvailability/edit?id=' + obj.data.PrId + "&seller=" + obj.data.Seller + "&floorPrice=" + obj.data.FloorPrice + "&xPrice=" + obj.data.XPrice  + "&inventory=" + obj.data.Inventory+ "&note=" + obj.data.Note+ "&name=" + obj.data.Name+"&sales=" + obj.data.Sales+"&shoppingCron=" + obj.data.ShoppingCron+"&theShelvesCron=" + obj.data.TheShelvesCron+"&inventoryCron=" + obj.data.InventoryCron+"&xinventoryCron=" + obj.data.XInventoryCron+"&statusCron1=" + obj.data.StatusCron1+"&statusCron2=" + obj.data.StatusCron2+"&statusCron3=" + obj.data.StatusCron3+"&statusCron4=" + obj.data.StatusCron4+"&statusCron5=" + obj.data.StatusCron5
+            });
+        }
+
+        window.remove = function (obj) {
+            layer.confirm('确定要删除该条数据', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                $.ajax({
+                    url: "/api/stockAvailability/remove" ,
+                    dataType: 'json',
+                    data: "ids=" + obj.data.ItemId,
+                    type: 'post',
+                    success: function (result) {
+                        if (result.code = 0) {
+                            toast.success({title: '通知', message: result.msg, position: 'topCenter'});
+                            obj.del();
+                        } else {
+                            obj.del();
+                            toast.error({title: '通知', message: result.msg, position: 'topCenter'});
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].ItemId + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要删除这些数据', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+
+                $.ajax({
+                    url: "/api/stockAvailability/remove",
+                    data: "ids=" + ids,
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (result) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                setTimeout(function () {
+                                     location.reload();;
+                                }, 1000);
+                            });
+                    }
+                })
+            });
+        }
+
+
+        window.dowimg = function (obj) {
+                $.ajax({
+                    url: "/api/stockAvailability/dowImg",
+                    type: 'GET',
+                    success: function (res) {
+                        toast.success({title: '通知', message: res.msg, position: 'topCenter'});
+
+                    }
+                })
+        }
+
+        window.refresh = function (param) {
+            table.reload('user-table');
+        }
+        layui.code();
+
+        upload.render({
+            elem: '.upload',
+            multiple: true,
+            accept: 'file',
+            exts: 'xlsx',
+            done: function (res, index, upload) {
+                //获取当前触发上传的元素，一般用于 elem 绑定 class 的情况，注意：此乃 layui 2.1.0 新增
+                var item = this.item;
+                console.log(res.code)
+                if (res.code==0){
+                    toast.success({title: '通知', message: res.msg, position: 'topCenter'});
+                    setTimeout(function () {
+                        location.reload();
+                    }, 5000);
+                }else{
+                    toast.error({title: '通知', message: res.msg, position: 'topCenter'});
+                }
+
+            }
+
+
+        })
+    })
+
+
+</script>
+</body>
+
+</html>

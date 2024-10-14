@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<link rel="stylesheet" href="../../public/static/pear/css/pear.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+<body style="height: 100%; margin: 0">
+<button class="pear-btn pear-btn-primary pear-btn-md selectP" >
+    <i class="layui-icon layui-icon-add-1"></i>
+    输入品牌查看店铺
+</button>
+<button class="pear-btn pear-btn-primary pear-btn-md selectS" >
+    <i class="layui-icon layui-icon-add-1"></i>
+    输入店铺查看品牌
+</button>
+<p>[[.sellers]]</p>
+<p>品牌：[[.brands]]</p>
+
+<div id="container" style="height: 100%"></div>
+
+<div class="layer-top" style="display: none;">
+    <div class="layer-top-id">
+        <form class="layui-form" action="" id="idsform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">品牌</label>
+                <div class="layui-col-md6">
+                    <textarea name="brands" placeholder="请输入品牌(第一行是品牌百分比占率,例子：33,33)" class="layui-textarea"></textarea>
+<!--                    <textarea name="brands" placeholder="请输入品牌" class="layui-textarea"></textarea>-->
+
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formid">立即提交</button>
+                    <button type="reset" id="idsre" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="layer-topS" style="display: none;">
+    <div class="layer-top-id">
+        <form class="layui-form" action="" id="Sform">
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">卖家</label>
+                <div class="layui-col-md6">
+                    <textarea name="sellers" placeholder="请输入店铺" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formid">立即提交</button>
+                    <button type="reset" id="ssre" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="../../public/static/layui/layui.js"></script>
+<script src="../../public/static/pear/pear.js"></script>
+<script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+<script type="text/javascript">
+    layui.use(['drawer', 'layer',"form"], function() {
+        let drawer = layui.drawer;
+        let $ = layui.jquery;
+        let form = layui.form;
+        let toast = layui.toast;
+        $(".selectP").click(function() {
+            drawer.open({
+                direction: "top",
+                dom: ".layer-top",
+                distance: "30%"
+            });
+        })
+        $(".selectS").click(function() {
+            drawer.open({
+                direction: "top",
+                dom: ".layer-topS",
+                distance: "30%"
+            });
+        })
+    })
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+    var app = {};
+
+    var option;
+
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                // Use axis to trigger tooltip
+                type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+            }
+        },
+        legend: {},
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'value'
+        },
+        yAxis: {
+            type: 'category',
+            data: [[.brands]]
+        },
+        series: [
+            [[ range $seller, $chart := .chart ]]
+    {
+        name: '[[ $seller ]]',
+            type: 'bar',
+        stack: 'total',
+        label: {
+        show: true
+    },
+        emphasis: {
+            focus: 'series'
+        },
+        data: [[$chart.Brandss]]
+
+    },
+    [[ end ]]
+        ]
+    };
+
+    if (option && typeof option === 'object') {
+        myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+</script>
+</body>
+</html>
